@@ -1,31 +1,41 @@
-import { api } from "./api";
-import type {
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-} from "../features/authTypes";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const authApi = api.injectEndpoints({
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface AuthResponse {
+  token: string;
+}
+
+export const authApi = createApi({
+  reducerPath: "authapi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:8000",
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("token");
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+      headers.set("Content-Type", "application/json");
+      return headers;
+    },
+  }),
   endpoints: (build) => ({
-    register: build.mutation<AuthResponse, RegisterRequest>({
-      query: (body) => ({
-        url: "/auth/register",
-        method: "POST",
-        body,
-      }),
-    }),
     login: build.mutation<AuthResponse, LoginRequest>({
-      query: (body) => ({
+      query: (info) => ({
         url: "/auth/login",
         method: "POST",
-        body,
+        body: info,
       }),
     }),
-    me: build.query<{ id: string; email: string }, void>({
-      query: () => ({ url: "/auth/me" }),
-      providesTags: ["User"],
+    register: build.mutation<AuthResponse, LoginRequest>({
+      query: (info) => ({
+        url: "/auth/register",
+        method: "POST",
+        body: info,
+      }),
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useMeQuery } = authApi;
+export const { useLoginMutation, useRegisterMutation } = authApi

@@ -69,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ setIsAuthorized }) => {
       if (!data.remember) console.log("Don't remember login");
       else console.log("Remember login");
 
-      setIsAuthorized(true)
+      setIsAuthorized(true);
       navigate("/", { replace: true });
     } catch (err: any) {
       console.error(err);
@@ -107,7 +107,6 @@ const Login: React.FC<LoginProps> = ({ setIsAuthorized }) => {
                 Вход в учетную запись
               </Typography>
 
-              {/* Email */}
               <Box>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
                   E-mail
